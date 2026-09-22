@@ -73,7 +73,8 @@
 
   * { box-sizing: border-box; }
   body { background: var(--bg); color: var(--ink); font-family: var(--font-body); font-size: 14px; line-height: 1.5; padding-inline: 20px; }
-  .wrap { max-width: 1480px; margin: 0 auto; padding-block: 0 56px; display: flex; flex-direction: column; gap: 24px; }
+  .wrap { max-width: 1480px; margin: 0 auto; padding-block: 0 56px; display: flex; flex-direction: column; gap: 24px; min-width: 0; }
+  .wrap > * { min-width: 0; }
   [hidden] { display: none !important; }
 
   header { display: flex; flex-wrap: wrap; justify-content: space-between; align-items: center; gap: 16px 32px; border-bottom: 4px solid var(--red); padding-bottom: 10px; }
@@ -87,7 +88,8 @@
   .tab[aria-selected="true"] { background: var(--ink); color: var(--bg); border-color: var(--ink); }
   .tab:focus-visible, select:focus-visible, .bar:focus-visible, .vb:focus-visible { outline: 2px solid var(--red); outline-offset: 2px; }
 
-  .view { display: flex; flex-direction: column; gap: 24px; }
+  .view { display: flex; flex-direction: column; gap: 24px; min-width: 0; }
+  .view > * { min-width: 0; }
   .panel { background: var(--surface); border: 1px solid var(--line); }
   .panel-head { display: flex; flex-wrap: wrap; justify-content: space-between; gap: 10px 24px; padding: 14px 18px; border-bottom: 1px solid var(--line); align-items: center; }
   .panel-head h2 { font-family: var(--font-display); font-size: 16px; letter-spacing: .04em; text-transform: uppercase; margin: 0; font-weight: 700; }
@@ -99,7 +101,8 @@
   .lg-free { background: color-mix(in srgb, var(--free) 22%, transparent); border: 1px dashed var(--free); }
   .lg-late { background-color: var(--muted); background-image: repeating-linear-gradient(135deg, rgba(255,255,255,.3) 0 4px, transparent 4px 8px); }
 
-  .controls { display: flex; flex-wrap: wrap; gap: 12px 24px; align-items: center; padding: 12px 18px; border-bottom: 1px solid var(--line); font-size: 13px; }
+  .controls { display: flex; flex-wrap: wrap; gap: 12px 24px; align-items: center; padding: 12px 18px; border-bottom: 1px solid var(--line); font-size: 13px; min-width: 0; }
+  .controls > * { min-width: 0; max-width: 100%; }
   .controls label { display: flex; align-items: center; gap: 8px; color: var(--muted); }
   select { font: inherit; font-family: var(--font-mono); font-size: 12px; background: var(--surface); color: var(--ink); border: 1px solid var(--line); padding: 6px 8px; }
 
@@ -143,6 +146,11 @@
 
   .vb, .gap, .ghost { position: absolute; top: 11px; height: 70px; border-radius: 2px; overflow: hidden; }
   .vb { z-index: 2; padding: 7px 8px; font-family: var(--font-mono); font-size: 10.5px; line-height: 1.4; display: flex; flex-direction: column; gap: 1px; cursor: default; }
+  body.can-drag .vb { cursor: grab; }
+  body.can-drag .vb:active { cursor: grabbing; }
+  .vb.dragging { opacity: .8; z-index: 6; box-shadow: 0 6px 14px rgba(0,0,0,.35); outline: 2px solid var(--ink); outline-offset: 1px; }
+  .vb.dragmove { outline: 2px dashed var(--red); }
+  .track.dragover { background: color-mix(in srgb, var(--red) 8%, transparent); }
   .vb .n { font-size: 12px; font-weight: 600; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
   .vb .t, .vb .cn { white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
   .vb .cn { opacity: .85; }
@@ -202,7 +210,7 @@
   .btn.danger { border-color: var(--red); color: var(--red); }
   .btn.sm { padding: 5px 10px; font-size: 11px; }
   .controls .sp { flex: 1 1 auto; }
-  .chkgrp { display: flex; align-items: center; gap: 10px; padding: 6px 10px; background: var(--surface); border: 1px solid var(--line); }
+  .chkgrp { display: flex; align-items: center; flex-wrap: wrap; gap: 6px 10px; padding: 6px 10px; background: var(--surface); border: 1px solid var(--line); min-width: 0; max-width: 100%; }
   .chkgrp .lbl { font-family: var(--font-mono); font-size: 10px; letter-spacing: .06em; text-transform: uppercase; color: var(--muted); }
   .chk { display: flex; align-items: center; gap: 5px; color: var(--ink); cursor: pointer; white-space: nowrap; }
   .chk input { accent-color: var(--red); cursor: pointer; }
@@ -329,6 +337,28 @@
   header .tabs { margin-left: auto; }
   @media (max-width: 900px) { .eyebrow { display: none; } }
   @media (max-width: 640px) { header { gap: 8px 12px; } .tab { padding: 8px 9px; font-size: 11px; } .logo { height: 44px; } }
+  @media (max-width: 480px) {
+    body { padding-inline: 10px; font-size: 13px; }
+    .wrap { gap: 16px; padding-block: 0 32px; }
+    .logo { height: 36px; }
+    h1 { font-size: clamp(15px, 4.6vw, 20px); }
+    .panel-head { padding: 12px 14px; }
+    .kpis, .stick .kpis { grid-template-columns: 1fr; gap: 10px; }
+    .kpi { padding: 14px 16px; gap: 10px; }
+    .kv b { font-size: 22px; }
+    .controls { padding: 10px 12px; gap: 8px 12px; font-size: 12px; }
+    .chkgrp { padding: 5px 8px; gap: 6px; }
+    .tl { min-width: 600px; grid-template-columns: 92px 1fr; }
+    .lane-label { padding: 8px 6px 8px 10px; }
+    .lane-label b { font-size: 12.5px; gap: 5px; }
+    .lane-label small { font-size: 9px; }
+    .vb { font-size: 9.5px; padding: 5px 6px; }
+    .track { height: 78px; }
+    .vb, .gap, .ghost { top: 7px; height: 62px; }
+    .wk { min-width: 540px; grid-template-columns: 104px 1fr 1fr; }
+    dialog { width: calc(100% - 16px); max-height: calc(100% - 16px); }
+    .db, fieldset { gap: 10px 12px; padding: 14px 16px; }
+  }
 
   /* menu hambúrguer */
   .burger { width: 44px; height: 44px; flex: 0 0 auto; border: 1px solid var(--line); background: var(--surface); color: var(--ink); display: inline-flex; flex-direction: column; align-items: center; justify-content: center; gap: 5px; cursor: pointer; padding: 0; }
@@ -356,8 +386,10 @@
 
   /* obras e intervenções */
   .lg-obra { background: repeating-linear-gradient(135deg, var(--obra-a) 0 4px, var(--obra-b) 4px 8px); border: 1px solid #8A5A00; }
-  .vb.obra { background: repeating-linear-gradient(135deg, var(--obra-a) 0 9px, var(--obra-b) 9px 18px); color: #111; border: 1.5px solid #8A5A00; }
+  .vb.obra { background: repeating-linear-gradient(135deg, color-mix(in srgb, var(--obra-a) 55%, transparent) 0 9px, color-mix(in srgb, var(--obra-b) 55%, transparent) 9px 18px); color: #111; border: 1.5px solid #8A5A00; backdrop-filter: blur(0.3px); }
+  .vb.obra .n, .vb.obra .t, .vb.obra .cn { text-shadow: 0 0 3px rgba(255,255,255,.85), 0 0 5px rgba(255,255,255,.85), 0 1px 0 rgba(255,255,255,.6); }
   .vb.obra.late { outline: 2px dashed #111; outline-offset: -4px; }
+  .vb.obra:hover, .vb.obra:focus-visible { background: repeating-linear-gradient(135deg, color-mix(in srgb, var(--obra-a) 80%, transparent) 0 9px, color-mix(in srgb, var(--obra-b) 80%, transparent) 9px 18px); }
   .obrag { position: absolute; top: 3px; height: 6px; z-index: 3; border: 1.5px dashed #8A5A00; background: color-mix(in srgb, var(--obra-a) 35%, transparent); pointer-events: none; }
   .obtag { display: inline-block; font-family: var(--font-mono); font-size: 10.5px; font-weight: 600; padding: 1px 6px; border: 1px solid #8A5A00; background: color-mix(in srgb, var(--obra-a) 30%, transparent); }
   .oinfo { font-size: 12.5px; }
@@ -823,7 +855,7 @@ var SUPABASE_ANON_KEY = "sb_publishable_dBun7RKOSW1pXdr6iOwP8Q_tmLt99mI"; /* cha
           var lo = real ? (c.kind === "proj" ? "início real " + ib(v.as) + " · proj." : "real " + ib(v.as) + "–" + ib(v.ae)) : "plan. " + pr(c.ps, c.pe);
           var otip = v.tp + ": " + v.n + " · " + bLabel(v.b) + " · " + (real ? (c.kind === "proj" ? "início real " + ib(v.as) + ", término projetado " + fd(c.ee) : "real " + ib(v.as) + " a " + ib(v.ae)) + " (planejado " + pr(c.ps, c.pe) + ")" : "planejado " + pr(c.ps, c.pe)) +
             " (" + n + " dias)" + (v.rep.length ? " · reprogramada " + v.rep.length + "x" : "") + ". Clique para editar.";
-          h += '<div class="vb obra' + (real && c.kind === "proj" ? " late" : "") + '" role="button" tabindex="0" data-obra="' + esc(v.id) + '" style="left:' + pc(vs - a) + ';width:' + pc(ve - vs + 1) + '" title="' + esc(otip) + '">' +
+          h += '<div class="vb obra' + (real && c.kind === "proj" ? " late" : "") + '" role="button" tabindex="0" data-obra="' + esc(v.id) + '" data-es="' + e.s + '" data-ee="' + e.e + '" style="left:' + pc(vs - a) + ';width:' + pc(ve - vs + 1) + '" title="' + esc(otip) + '">' +
             '<span class="n">' + esc(v.tp) + (real && c.dS ? " · " + sgn(c.dS) : "") + (v.rep.length ? " · REPROG." : "") + '</span><span class="t">' + esc(v.n) + '</span><span class="cn">' + esc(lo) + '</span></div>';
           return;
         }
@@ -839,7 +871,7 @@ var SUPABASE_ANON_KEY = "sb_publishable_dBun7RKOSW1pXdr6iOwP8Q_tmLt99mI"; /* cha
         var tip = v.n + " · " + matName(v) + " · " + fmt(v.t) + " t · Berço " + v.b + " · " + v.c + " · " + STL[v.st] +
           " · " + (real ? (c.kind === "proj" ? "chegada real " + ib(v.as) + ", término projetado " + fd(c.ee) : "real " + ib(v.as) + " a " + ib(v.ae)) + " (planejado " + pr(c.ps, c.pe) + ")" : "lay days " + pr(c.ps, c.pe)) +
           " (" + n + " dias). Clique para editar.";
-        h += '<div class="vb ' + cls + '" role="button" tabindex="0" data-id="' + esc(v.id) + '" style="--c:' + mcol(v) + ';left:' + pc(vs - a) + ';width:' + pc(ve - vs + 1) + '" title="' + esc(tip) + '">' +
+        h += '<div class="vb ' + cls + '" role="button" tabindex="0" data-id="' + esc(v.id) + '" data-es="' + e.s + '" data-ee="' + e.e + '" style="--c:' + mcol(v) + ';left:' + pc(vs - a) + ';width:' + pc(ve - vs + 1) + '" title="' + esc(tip) + '">' +
           '<span class="n">' + esc(shortName(v.n)) + tag + '</span><span class="t">' + fmt(v.t) + ' t</span><span class="cn">' + esc(l3) + '</span></div>';
       });
       var pn = Math.min(Math.max(TODAY - a, 0), SL);
@@ -1007,6 +1039,7 @@ var SUPABASE_ANON_KEY = "sb_publishable_dBun7RKOSW1pXdr6iOwP8Q_tmLt99mI"; /* cha
     else t = "Alterações salvas e compartilhadas com a equipe.";
     $("dbState").textContent = t;
     $("dbState").classList.toggle("warn", !db || readOnly);
+    document.body.classList.toggle("can-drag", !(!db || readOnly));
     var off = readOnly || !db, tt = off ? "Edição indisponível para você nesta visualização" : "";
     ["btnAdd", "btnMats", "btnObra", "btnObra2", "dAdd", "dObra", "dMats"].forEach(function (k) { $(k).disabled = off; $(k).title = tt; });
   }
@@ -1126,12 +1159,112 @@ var SUPABASE_ANON_KEY = "sb_publishable_dBun7RKOSW1pXdr6iOwP8Q_tmLt99mI"; /* cha
   document.querySelectorAll("[data-today]").forEach(function (btn) {
     btn.addEventListener("click", function () { var t = $(btn.getAttribute("data-today")); if (!t.disabled) t.value = TODAY_ISO; });
   });
-  $("tl").addEventListener("click", function (e) { var t = e.target.closest(".vb"); if (!t) return; if (t.hasAttribute("data-obra")) openObra(t.getAttribute("data-obra")); else openDlg(t.getAttribute("data-id")); });
+  function barAtPoint(x, y) {
+    var stack = (document.elementsFromPoint ? document.elementsFromPoint(x, y) : []).filter(function (el) { return el.classList && el.classList.contains("vb"); });
+    var vv = null, oo = null;
+    stack.forEach(function (el) { if (el.hasAttribute("data-id") && !vv) vv = el; if (el.hasAttribute("data-obra") && !oo) oo = el; });
+    return vv || oo;
+  }
+  $("tl").addEventListener("click", function (e) { if (DRAG.suppressClick) { DRAG.suppressClick = false; return; } var t = barAtPoint(e.clientX, e.clientY) || e.target.closest(".vb"); if (!t) return; if (t.hasAttribute("data-obra")) openObra(t.getAttribute("data-obra")); else openDlg(t.getAttribute("data-id")); });
   $("tl").addEventListener("keydown", function (e) {
     if (e.key !== "Enter" && e.key !== " ") return;
     var t = e.target.closest && e.target.closest(".vb"); if (t) { e.preventDefault(); if (t.hasAttribute("data-obra")) openObra(t.getAttribute("data-obra")); else openDlg(t.getAttribute("data-id")); }
   });
   $("devTbl").addEventListener("click", function (e) { var t = e.target.closest("[data-edit]"); if (t) openDlg(t.getAttribute("data-edit")); });
+
+  /* ---------- arrastar com mouse/dedo para reprogramar direto no mapa ---------- */
+  var DRAG = { active: null, suppressClick: false };
+  function findVessel(id) { var r = null; V.forEach(function (x) { if (x.id === id) r = x; }); return r; }
+  function dragSegIndex(track) {
+    var blocks = $("tl").querySelectorAll(".tl"), blockEl = track.closest(".tl");
+    for (var i = 0; i < blocks.length; i++) if (blocks[i] === blockEl) return i;
+    return -1;
+  }
+  function dragLane(track) { var m = track.className.match(/\bb(\d+)\b/); return m ? +m[1] : null; }
+  function dragClearTracks() { $("tl").querySelectorAll(".track.dragover").forEach(function (t) { t.classList.remove("dragover"); }); }
+  function dragOnDown(e) {
+    if (readOnly || !db) return;
+    if (e.button !== undefined && e.button !== 0) return;
+    var bar = barAtPoint(e.clientX, e.clientY) || e.target.closest(".vb"); if (!bar) return;
+    var track = bar.closest(".track"); if (!track) return;
+    var si = dragSegIndex(track); if (si < 0) return;
+    var S = SEGS[si]; if (!S) return;
+    var rect = track.getBoundingClientRect();
+    var b0 = dragLane(track);
+    DRAG.active = {
+      id: bar.getAttribute("data-obra") || bar.getAttribute("data-id"), isObra: bar.hasAttribute("data-obra"),
+      bar: bar, segA: S[0], segZ: S[1], segIdx: si, pxPerDay: rect.width / SL,
+      startX: e.clientX, startY: e.clientY, es: +bar.getAttribute("data-es"), ee: +bar.getAttribute("data-ee"),
+      dragging: false, delta: 0, origB: b0, curB: b0, pointerId: e.pointerId
+    };
+  }
+  function dragOnMove(e) {
+    var d = DRAG.active; if (!d) return;
+    var dx = e.clientX - d.startX, dy = e.clientY - d.startY;
+    if (!d.dragging) {
+      if (Math.abs(dx) < 5 && Math.abs(dy) < 5) return;
+      d.dragging = true; d.bar.classList.add("dragging");
+      try { d.bar.setPointerCapture(d.pointerId); } catch (er) { }
+    }
+    e.preventDefault();
+    var delta = Math.round(dx / d.pxPerDay);
+    var lo = d.segA - d.es, hi = d.segZ - d.ee;
+    if (delta < lo) delta = lo; if (delta > hi) delta = hi;
+    d.delta = delta;
+    d.bar.style.left = pc(d.es + delta - d.segA);
+    dragClearTracks();
+    var elAt = document.elementFromPoint(e.clientX, e.clientY);
+    var trackAt = elAt && elAt.closest(".track");
+    var newB = (trackAt && dragSegIndex(trackAt) === d.segIdx) ? dragLane(trackAt) : d.origB;
+    var ok = d.isObra ? (newB === 8 || newB === 9 || newB === 10) : (newB === 8 || newB === 9);
+    d.curB = ok ? newB : d.origB;
+    if (trackAt && d.curB !== d.origB) trackAt.classList.add("dragover");
+    d.bar.classList.toggle("dragmove", d.curB !== d.origB);
+  }
+  function dragOnUp(e) {
+    var d = DRAG.active; if (!d) return;
+    DRAG.active = null;
+    dragClearTracks();
+    if (!d.dragging) return;
+    d.bar.classList.remove("dragging", "dragmove");
+    try { d.bar.releasePointerCapture(d.pointerId); } catch (er) { }
+    DRAG.suppressClick = true;
+    if (d.delta === 0 && d.curB === d.origB) return;
+    if (d.isObra) dragMoveObra(d.id, d.delta, d.curB); else dragMoveVessel(d.id, d.delta, d.curB);
+  }
+  $("tl").addEventListener("pointerdown", dragOnDown);
+  document.addEventListener("pointermove", dragOnMove);
+  document.addEventListener("pointerup", dragOnUp);
+  document.addEventListener("pointercancel", function () { var d = DRAG.active; DRAG.active = null; dragClearTracks(); if (d && d.dragging) { d.bar.classList.remove("dragging", "dragmove"); render26(); } });
+  async function dragMoveVessel(id, delta, newB) {
+    var v = findVessel(id);
+    if (!v || readOnly || !db) { render26(); return; }
+    var o = { n: v.n, m: v.m, t: v.t, b: newB, c: v.c, st: v.st, s: v.s, e: v.e, as: v.as, ae: v.ae, note: v.note };
+    var usePlanned = (occMode === "plan" || v._c.kind === "plan");
+    if (usePlanned) { o.s = isoOf(di(v.s) + delta); o.e = isoOf(di(v.e) + delta); }
+    else if (v._c.kind === "done") { o.as = isoOf(di(v.as) + delta); o.ae = isoOf(di(v.ae) + delta); }
+    else { o.as = isoOf(di(v.as) + delta); }
+    o.upd = new Date().toISOString();
+    try { await ensureSeeded(); await db.doc("vessels/" + id).set(o); }
+    catch (er) { writeFail(er); render26(); }
+  }
+  async function dragMoveObra(id, delta, newB) {
+    var w = findObra(id);
+    if (!w || readOnly || !db) { render26(); return; }
+    var o = { kind: "obra", n: w.n, tp: w.tp, b: newB, s: w.s, e: w.e, as: w.as, ae: w.ae, note: w.note, s0: w.s0, e0: w.e0, rep: w.rep.slice() };
+    var usePlanned = (occMode === "plan" || w._c.kind === "plan");
+    if (usePlanned) {
+      var why = prompt("Motivo da reprogramação de \"" + w.n + "\":", "Ajuste por arrasto no mapa");
+      if (why === null) { render26(); return; }
+      why = why.trim() || "Reprogramado por arrasto no mapa";
+      o.s = isoOf(di(w.s) + delta); o.e = isoOf(di(w.e) + delta);
+      o.rep.push({ at: new Date().toISOString(), by: meEmail, fs: w.s, fe: w.e, ts: o.s, te: o.e, why: why });
+    } else if (w._c.kind === "done") { o.as = isoOf(di(w.as) + delta); o.ae = isoOf(di(w.ae) + delta); }
+    else { o.as = isoOf(di(w.as) + delta); }
+    o.upd = new Date().toISOString();
+    try { await ensureSeeded(); await db.doc("vessels/" + id).set(o); }
+    catch (er) { writeFail(er, $("oErr")); render26(); }
+  }
 
 
   /* ---------- obras e intervenções: diálogo ---------- */
