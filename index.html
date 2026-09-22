@@ -202,6 +202,10 @@
   .btn.danger { border-color: var(--red); color: var(--red); }
   .btn.sm { padding: 5px 10px; font-size: 11px; }
   .controls .sp { flex: 1 1 auto; }
+  .chkgrp { display: flex; align-items: center; gap: 10px; padding: 6px 10px; background: var(--surface); border: 1px solid var(--line); }
+  .chkgrp .lbl { font-family: var(--font-mono); font-size: 10px; letter-spacing: .06em; text-transform: uppercase; color: var(--muted); }
+  .chk { display: flex; align-items: center; gap: 5px; color: var(--ink); cursor: pointer; white-space: nowrap; }
+  .chk input { accent-color: var(--red); cursor: pointer; }
   .dbstate { font-family: var(--font-mono); font-size: 11px; color: var(--muted); max-width: 60ch; }
   .dbstate.warn { color: var(--red); font-weight: 500; }
   .kpi.dvk { --c: var(--ink); }
@@ -419,6 +423,12 @@
             <option value="plan">Somente planejado</option>
           </select>
         </label>
+        <span class="chkgrp" aria-label="Camadas exibidas no Gantt">
+          <span class="lbl">Mostrar</span>
+          <label class="chk"><input type="checkbox" id="chObras" checked>Obras/intervenções</label>
+          <label class="chk"><input type="checkbox" id="chB8" checked>Navios Berço 8</label>
+          <label class="chk"><input type="checkbox" id="chB9" checked>Navios Berço 9</label>
+        </span>
         <span class="sp"></span>
         <span class="dbstate" id="dbState" aria-live="polite"></span>
         <button type="button" class="btn" id="btnObra" disabled>+ Lançar obra / intervenção</button>
@@ -698,7 +708,8 @@ var SUPABASE_ANON_KEY = "sb_publishable_dBun7RKOSW1pXdr6iOwP8Q_tmLt99mI"; /* cha
   function bs(v) { return v.b === 0 ? [8, 9] : [v.b]; }
   function nmOf(v) { return v.w ? v.n : shortName(v.n); }
   function bLabel(b) { return b === 0 ? "Berços 8 e 9" : b === 10 ? "Pátio 10" : "Berço " + b; }
-  function LN() { return W.some(function (w) { return w.b === 10; }) ? [8, 9, 10] : [8, 9]; }
+  function LN() { var lay = layerState(); return (lay.obras && W.some(function (w) { return w.b === 10; })) ? [8, 9, 10] : [8, 9]; }
+  function layerState() { var e8 = $("chB8"), e9 = $("chB9"), eo = $("chObras"); return { b8: !e8 || e8.checked, b9: !e9 || e9.checked, obras: !eo || eo.checked }; }
   function cleanObra(id, o) {
     if (!o || !ISO.test(o.s || "") || !ISO.test(o.e || "") || di(o.e) < di(o.s)) return null;
     var b = +o.b; if (b !== 8 && b !== 9 && b !== 10 && b !== 0) return null;
@@ -1001,7 +1012,8 @@ var SUPABASE_ANON_KEY = "sb_publishable_dBun7RKOSW1pXdr6iOwP8Q_tmLt99mI"; /* cha
   }
 
   function render26() {
-    ALL = V.concat(W);
+    var LAY = layerState();
+    ALL = V.filter(function (v) { return v.b === 8 ? LAY.b8 : v.b === 9 ? LAY.b9 : true; }).concat(LAY.obras ? W : []);
     var o = occupancy(), G = { 8: gaps(o, 8), 9: gaps(o, 9) }, cf = conflicts();
     renderAlerts(cf); renderMatBar(); renderKpis(G); renderTimeline(o, G); renderDev(); renderObras(cf); renderFree(G); renderWeeks(o); updateState();
   }
@@ -1184,6 +1196,7 @@ var SUPABASE_ANON_KEY = "sb_publishable_dBun7RKOSW1pXdr6iOwP8Q_tmLt99mI"; /* cha
     $("oS").value = isoOf(st); $("oE").value = isoOf(st + dur); oRefresh();
   });
   ["oS", "oE", "oB"].forEach(function (k) { $(k).addEventListener("input", oRefresh); $(k).addEventListener("change", oRefresh); });
+  ["chObras", "chB8", "chB9"].forEach(function (k) { $(k).addEventListener("change", render26); });
   async function saveObra() {
     if (readOnly || !db) return;
     var o = { kind: "obra", n: $("oN").value.trim(), tp: $("oTp").value, b: +$("oB").value, s: $("oS").value, e: $("oE").value, as: $("oAs").value, ae: $("oAe").value, note: $("oNote").value.trim() };
